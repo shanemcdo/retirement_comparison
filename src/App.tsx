@@ -204,6 +204,15 @@ const App: Component = () => {
 		const [data, setData] = createSignal<Data>({ name: 'test', points: [] });
 		setDatasets([ ...datasets(), { id: dataID++, data, setData } ]);
 	}
+	const removeDataset = (index: number) => {
+		const d = [...datasets()];
+		console.log('before')
+		console.log(d);
+		d.splice(index, 1);
+		console.log('after')
+		console.log(d);
+		setDatasets(d);
+	}
 	onMount(() => {
 		Chart.register(Title, Tooltip, Legend, Colors);
 		Chart.defaults.font.family = '"Josefin Sans", sans-serif';
@@ -245,9 +254,10 @@ const App: Component = () => {
 	return <div class={styles.app}>
 		<h1>Retirement Comparison Calculator</h1>
 		<div class={styles.grid_container}>
-			<For each={datasets()}>{ ({ setData }, index) =>
+			<For each={datasets()}>{ ({ setData }, index) => <>
 				<NumberInputs setData={setData} index={index()} />
-			}</For>
+				<button onclick={() => removeDataset(index())}>X</button>
+			</>}</For>
 			<button onclick={addDataset}>+</button>
 		</div>
 		<div class={styles.chart_container} >
