@@ -13,13 +13,20 @@
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: 0 20%;
-  text-align: right;
-  label {
-  	margin-right: 0.5em;
-  }
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	text-align: right;
+	label {
+		margin-right: 0.5em;
+	}
+	min-width: 400px;
+}
+
+.grid_container {
+	display: flex;
+	overflow-y: visible;
+	overflow-x: scroll;
+	min-height: min-content;
 }
 
 .number_input {

@@ -95,6 +95,7 @@ function calculateData(
 		currentInvestmentPerMonth *= 1 + investmentIncreasingRatePercent / 100;
 		currentAge += 1;
 	}
+	console.log(data);
 	return data;
 }
 
@@ -202,24 +203,23 @@ const App: Component = () => {
 		Chart.register(Title, Tooltip, Legend, Colors);
 		Chart.defaults.font.family = '"Josefin Sans", sans-serif';
 		addDataset();
-		addDataset();
+		// TODO: read search params and parse here
 	});
 	const chartData = () => {
 		const datasetsArray = [];
 		for (const { data } of datasets()) {
 			datasetsArray.push({
 				label: data().name,
-				data: data().points.map(({ value }) => value),
+				data: data().points.map(({ year, value }) => ({ x: year, y: value})),
 			});
 		}
 		return {
 			// TODO: fix labels
-			labels: datasets().at(0)?.data().points.map(({ year }) => year),
 			datasets: datasetsArray,
 		};
 	}
 	const chartOptions = {
-		responsive: true,
+		//responsive: true,
 		maintainAspectRatio: false,
 		animation: {
 			duration: 0,
@@ -228,15 +228,21 @@ const App: Component = () => {
 			y: { 
 				min: 0,
 			},
+			x: {
+				type: 'linear',
+			},
 		},
 	};
 	// TODO: make chart the right height
 	// TODO: add button for adding more people
 	return <div class={styles.app}>
 		<h1>Retirement Comparison Calculator</h1>
-		<For each={datasets()}>{ ({ setData }, index) =>
-			<NumberInputs setData={setData} index={index()} />
-		}</For>
+		<div class={styles.grid_container}>
+			<For each={datasets()}>{ ({ setData }, index) =>
+				<NumberInputs setData={setData} index={index()} />
+			}</For>
+			<button onclick={addDataset}>+</button>
+		</div>
 		<div class={styles.chart_container} >
 			<Line
 				data={chartData()}
