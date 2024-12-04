@@ -68,7 +68,7 @@ function calculateData(
 		name,
 		points: [],
 	};
-	while(currentAge < maxAge) {
+	while(currentAge <= maxAge) {
 		data.points.push({
 			year: currentAge,
 			value: currentBalance,
@@ -123,6 +123,11 @@ function deleteURLParam(name: string) {
 function getURLParam(name: string): string | null {
 	const url = getURL();
 	return url.searchParams.get(name);
+}
+
+function getURLParams(): string[] {
+	const url = getURL();
+	return [... url.searchParams.keys()];
 }
 
 // TODO: rename this shit
@@ -202,8 +207,10 @@ const App: Component = () => {
 	onMount(() => {
 		Chart.register(Title, Tooltip, Legend, Colors);
 		Chart.defaults.font.family = '"Josefin Sans", sans-serif';
-		addDataset();
-		// TODO: read search params and parse here
+		const datasetCount = Math.max(0, ...getURLParams().map(param => parseInt(param.split('.')[0])));
+		for(let i = 0; i <= datasetCount; i++) {
+			addDataset();
+		}
 	});
 	const chartData = () => {
 		const datasetsArray = [];
