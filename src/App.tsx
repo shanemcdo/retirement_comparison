@@ -206,11 +206,7 @@ const App: Component = () => {
 	}
 	const removeDataset = (index: number) => {
 		const d = [...datasets()];
-		console.log('before')
-		console.log(d);
 		d.splice(index, 1);
-		console.log('after')
-		console.log(d);
 		setDatasets(d);
 	}
 	onMount(() => {
