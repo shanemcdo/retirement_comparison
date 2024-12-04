@@ -225,6 +225,8 @@ const App: Component = () => {
 			},
 		},
 	};
+	// TODO: make chart the right height
+	// TODO: add button for adding more people
 	return <div class={styles.app}>
 		<h1>Retirement Comparison Calculator</h1>
 		<For each={datasets()}>{ ({ setData }) =>
