@@ -35,11 +35,13 @@ type NumberInputProps = {
 	ref: Ref<HTMLInputElement>,
 	updateData: () => void,
 	type?: string,
+	index: number,
 };
 
 type NumberInputsProps = {
 	setData: Setter<Data>,
 	defaults?: Partial<Inputs>,
+	index: number,
 };
 
 function calculateData(
@@ -125,19 +127,20 @@ function getURLParam(name: string): string | null {
 // TODO: rename this shit
 const NumberInput: Component<NumberInputProps> = props => {
 	const id = createUniqueId();
+	const name = () => `${props.index}.${props.name}`;
 	return <>
 		<label for={id} >{ props.name }:</label>
 		<input
 			type={props.type ?? "number"}
-			value={getURLParam(props.name) ?? props.defaultValue}
+			value={getURLParam(name()) ?? props.defaultValue}
 			class={styles.number_input}
 			ref={props.ref}
 			id={id}
 			onChange={(e) => {
 				if(e.target.valueAsNumber === props.defaultValue) {
-					deleteURLParam(props.name)
+					deleteURLParam(name())
 				} else {
-					setURLParam(props.name, e.target.value);
+					setURLParam(name(), e.target.value);
 				}
 				props.updateData();
 			}}
@@ -171,15 +174,15 @@ const NumberInputs: Component<NumberInputsProps> = props => {
 	onMount(updateData);
 	return <>
 		<div class={styles.grid}>
-			<NumberInput name="Name" type="string"             defaultValue={props.defaults?.name ?? 'Albert'}                  ref={nameInput}                       updateData={updateData}/>
-			<NumberInput name="Starting age"                   defaultValue={props.defaults?.startingAge ?? 20}                 ref={startingAgeInput}                updateData={updateData}/>
-			<NumberInput name="Starting Balance"               defaultValue={props.defaults?.startingBalance ?? 0}              ref={startingBalanceInput}            updateData={updateData}/>
-			<NumberInput name="Interest Rate (%)"              defaultValue={props.defaults?.interestRate ?? 10}                ref={interestRateInput}               updateData={updateData}/>
-			<NumberInput name="Retirement Age"                 defaultValue={props.defaults?.retirementAge ?? 50}               ref={retirementAgeInput}              updateData={updateData}/>
-			<NumberInput name="Max Age"                        defaultValue={props.defaults?.maxAge ?? 120}                     ref={maxAgeInput}                     updateData={updateData}/>
-			<NumberInput name="Starting Investment Per Month"  defaultValue={props.defaults?.startingInvestmentPerMonth ?? 500} ref={startingInvestmentPerMonthInput} updateData={updateData}/>
-			<NumberInput name="Investment Increasing Rate (%)" defaultValue={props.defaults?.investmentIncreasingRate ?? 1}     ref={investmentIncreasingRateInput}   updateData={updateData}/>
-			<NumberInput name="Spending Per Year Input"        defaultValue={props.defaults?.spendingPerYear ?? 100_000}        ref={spendingPerYearInput}            updateData={updateData}/>
+			<NumberInput index={props.index} name="Name" type="string"             defaultValue={props.defaults?.name ?? 'Albert'}                  ref={nameInput}                       updateData={updateData}/>
+			<NumberInput index={props.index} name="Starting age"                   defaultValue={props.defaults?.startingAge ?? 20}                 ref={startingAgeInput}                updateData={updateData}/>
+			<NumberInput index={props.index} name="Starting Balance"               defaultValue={props.defaults?.startingBalance ?? 0}              ref={startingBalanceInput}            updateData={updateData}/>
+			<NumberInput index={props.index} name="Interest Rate (%)"              defaultValue={props.defaults?.interestRate ?? 10}                ref={interestRateInput}               updateData={updateData}/>
+			<NumberInput index={props.index} name="Retirement Age"                 defaultValue={props.defaults?.retirementAge ?? 50}               ref={retirementAgeInput}              updateData={updateData}/>
+			<NumberInput index={props.index} name="Max Age"                        defaultValue={props.defaults?.maxAge ?? 120}                     ref={maxAgeInput}                     updateData={updateData}/>
+			<NumberInput index={props.index} name="Starting Investment Per Month"  defaultValue={props.defaults?.startingInvestmentPerMonth ?? 500} ref={startingInvestmentPerMonthInput} updateData={updateData}/>
+			<NumberInput index={props.index} name="Investment Increasing Rate (%)" defaultValue={props.defaults?.investmentIncreasingRate ?? 1}     ref={investmentIncreasingRateInput}   updateData={updateData}/>
+			<NumberInput index={props.index} name="Spending Per Year Input"        defaultValue={props.defaults?.spendingPerYear ?? 100_000}        ref={spendingPerYearInput}            updateData={updateData}/>
 		</div>
 	</>;
 };
@@ -199,6 +202,7 @@ const App: Component = () => {
 		Chart.register(Title, Tooltip, Legend, Colors);
 		Chart.defaults.font.family = '"Josefin Sans", sans-serif';
 		addDataset();
+		addDataset();
 	});
 	const chartData = () => {
 		const datasetsArray = [];
@@ -209,6 +213,7 @@ const App: Component = () => {
 			});
 		}
 		return {
+			// TODO: fix labels
 			labels: datasets().at(0)?.data().points.map(({ year }) => year),
 			datasets: datasetsArray,
 		};
@@ -229,8 +234,8 @@ const App: Component = () => {
 	// TODO: add button for adding more people
 	return <div class={styles.app}>
 		<h1>Retirement Comparison Calculator</h1>
-		<For each={datasets()}>{ ({ setData }) =>
-			<NumberInputs setData={setData} />
+		<For each={datasets()}>{ ({ setData }, index) =>
+			<NumberInputs setData={setData} index={index()} />
 		}</For>
 		<div class={styles.chart_container} >
 			<Line
