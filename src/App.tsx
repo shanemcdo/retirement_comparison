@@ -95,7 +95,6 @@ function calculateData(
 		currentInvestmentPerMonth *= 1 + investmentIncreasingRatePercent / 100;
 		currentAge += 1;
 	}
-	console.log(data);
 	return data;
 }
 
